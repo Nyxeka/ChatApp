@@ -23,6 +23,7 @@
     "firebase": "^5.0.2",
     "node-gyp": "^3.6.2",
     "react": "16.3.1",
-    "react-native": "~0.55.2"
+    "react-native": "~0.55.2",
+    "react-navigation": "^2.0.1"
   }
 }
