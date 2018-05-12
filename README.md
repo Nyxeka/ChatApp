@@ -1,3 +1,3 @@
 Simple chat app for a coding challenge.
 
-"Closing Database" means I'll be adding authentication as a requirement to read/write to it.
+I'll be shutting down access to the database until user authentication is added. Contact me if you'd like to see it working.
