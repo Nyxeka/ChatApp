@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
-import ReactNative from 'react-native';
-const styles = require('../styles.js')
-const { View, TouchableHighlight, Text } = ReactNative;
+import { View, TouchableHighlight, Text } from 'react-native';
+import { styles } from '../styles';
 
-class ListItem extends Component {
+export default class ListItem extends Component {
 
-    _onPress = () => {
+    /*_onPress = () => {
         this.props.onPressItem(this.props.id);
-      };
+    };*/
 
   render() {
     return (

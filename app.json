@@ -1,15 +1,14 @@
 {
   "expo": {
-    "name": "Your App Name",
-    "icon": "./path/to/your/app-icon.png",
+    "name": "simpleChatApp",
     "version": "1.0.0",
     "slug": "your-app-slug",
     "sdkVersion": "27.0.0",
     "ios": {
-      "bundleIdentifier": "com.yourcompany.yourappname"
+      "bundleIdentifier": "com.nickhylands.simpleChatApp"
     },
     "android": {
-      "package": "com.yourcompany.yourappname"
+      "package": "com.nickhylands.simpleChatApp"
     }
    }
 }

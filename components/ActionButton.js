@@ -2,8 +2,7 @@
 
 import React, {Component} from 'react';
 import ReactNative from 'react-native';
-const styles = require('../styles.js')
-const constants = styles.constants;
+import { styles, constants } from '../styles';
 const { StyleSheet, Text, View, TouchableHighlight} = ReactNative;
 
 class ActionButton extends Component {
