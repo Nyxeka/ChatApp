@@ -260,37 +260,37 @@ class ChatScreen extends Component {
 
   render() {
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <ScrollView ref={ref => this.scrollView = ref} style={{flex:1}} onContentSizeChange={(contentWidth, contentHeight) => { this.scrollView.scrollToEnd({ animated: true }); }}>
+        <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={80}>
+          <ScrollView ref={ref => this.scrollView = ref} style={{flex:1}} onContentSizeChange={(contentWidth, contentHeight) => { this.scrollView.scrollToEnd({ animated: true }); }}>
 
-          <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview} />
-        </ScrollView>
-        <View style={{
-          height: 60,
-          flexDirection: 'row',
-          justifyContent:'space-evenly',
-        }}>
-          <TextInput
-             style={
-              {
-                height: 60,
-                borderColor: 'gray',
-                borderWidth: 1,
-                flex:8,
-                padding:10,
-                color: '#262626',
-                fontSize: 18,
-                fontWeight: '200',
+            <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview} />
+          </ScrollView>
+          <View style={{
+            height: 60,
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+          }}>
+            <TextInput
+              style={
+                {
+                  height: 60,
+                  borderColor: 'gray',
+                  borderWidth: 1,
+                  flex: 8,
+                  padding: 10,
+                  color: '#262626',
+                  fontSize: 18,
+                  fontWeight: '200',
+                }
               }
-            }
-            underlineColorAndroid={'transparent'}
-            placeholder="send a message"
-            onChangeText={(chatTextToSend) => this.setState({ chatTextToSend })}
-            value={this.state.chatTextToSend}
-          />
-          <ActionButton title="Send" onPress={this._addItem.bind(this)} />
-        </View>
-      </KeyboardAvoidingView>
+              underlineColorAndroid={'transparent'}
+              placeholder="send a message"
+              onChangeText={(chatTextToSend) => this.setState({ chatTextToSend })}
+              value={this.state.chatTextToSend}
+            />
+            <ActionButton title="Send" onPress={this._addItem.bind(this)} />
+          </View>
+        </KeyboardAvoidingView>
     );
   }
 }

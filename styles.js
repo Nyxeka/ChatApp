@@ -9,7 +9,7 @@ const constants = {
 
 const styles = {
   container: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#fff',
     flex: 1,
   },
   listview: {
@@ -74,6 +74,10 @@ const styles = {
     alignSelf: 'center',
     paddingTop: 10,
     paddingBottom: 10
+  },
+
+  wrapper:{
+    flex:1,
   },
 
   textBoxesContainer: {
