@@ -7,7 +7,7 @@ const TitledInput = ({value, onChangeText, placeholder, secureTextEntry }) => {
     const { inputStyle, labelStyle, containerStyle } = styles;
 
     return (
-        <View style={containerStyle}>
+        <View style={styles.containerStyle}>
             <TextInput
                 autoCorrect={false}
                 placeholder={placeholder}
@@ -36,7 +36,6 @@ const styles = {
         alignSelf:'center',
         height: 50,
         padding:2,
-        //flexDirection: 'column',
         width:'100%',
         alignItems: 'flex-start',
         borderColor: '#D4D4D4',

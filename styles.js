@@ -14,14 +14,14 @@ const styles = {
   },
   listview: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#FF0000', // debug colour for border
+    //borderWidth: 1,
+    //borderColor: '#FF0000', // debug colour for border
 
   },
   li: {
     backgroundColor: '#fff',
     borderBottomColor: '#eee',
-    borderColor: '#00FF00', // debug colour for border
+    //borderColor: '#00FF00', // debug colour for border
     borderWidth: 1,
     paddingLeft: 16,
     paddingTop: 14,
@@ -65,9 +65,9 @@ const styles = {
     backgroundColor: constants.actionColor,
     borderColor: 'transparent',
     borderWidth: 1,
-    paddingLeft: 16,
-    paddingTop: 14,
-    paddingBottom: 16,
+    justifyContent:'center',
+    alignItems:'center',
+    flex:2,
   },
   errorTextStyle: {
     color: '#E64A19',
@@ -82,7 +82,6 @@ const styles = {
     justifyContent: 'space-evenly',
     flexDirection: 'column',
     width: '80%',
-
     flex: 3
   },
   // holds all the buttons

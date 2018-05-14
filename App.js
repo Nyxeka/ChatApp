@@ -55,7 +55,10 @@ class LoggedOutScreen extends Component {
 
     const { email, password } = this.state;
     firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(() => { this.setState({ error: '', loading: false }); })
+      .then(() => {
+        this.setState({ error: '', loading: false });
+        this.props.navigation.navigate('Contacts');
+      })
       .catch(() => {
         this.setState({ error: 'Authentication failed.', loading: false });
       });
@@ -117,7 +120,7 @@ class LoggedOutScreen extends Component {
           </View>
           <View style={styles.horizontalButtonResizer}>
             <Button
-              onPress={this.OnCreateAccount.bind(this)}
+              onPress={this.onLoginPress.bind(this)}
               title="Log in"
               style={styles.horizontallyAlignedButtons} />
           </View>
@@ -198,7 +201,7 @@ class HomeScreen extends Component {
 
 class ChatScreen extends Component {
   static navigationOptions = {
-    title: 'Chat Screen',
+    title: 'Chat With: ',
   };
   constructor(props) {
     super(props);
@@ -215,9 +218,9 @@ class ChatScreen extends Component {
 
     //set up a way for us to access the database.
     this.chatLogRef = firebaseApp.database().ref('chats/' + this.chatId + "/chatlog");
-    console.log('Set chatlog url to: ' + 'chats/' + this.chatId + "/chatlog");
+    console.log('Set chatlog url to: ' + 'chats/' + this.props.navigation.getParam('chatId', 'default') + "/chatlog");
   }
-  
+
   listenForItems(itemsRef) {
     itemsRef.on('value', (snapshot) => {
 
@@ -258,27 +261,36 @@ class ChatScreen extends Component {
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <StatusBar title="Chat With: " />
-        <ScrollView ref={ref => this.scrollView = ref} onContentSizeChange={(contentWidth, contentHeight) => { this.scrollView.scrollToEnd({ animated: true }); }}>
+        <ScrollView ref={ref => this.scrollView = ref} style={{flex:1}} onContentSizeChange={(contentWidth, contentHeight) => { this.scrollView.scrollToEnd({ animated: true }); }}>
 
           <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview} />
         </ScrollView>
-        <TextInput
-          style={
-            {
-              height: 40,
-              borderColor: 'gray',
-              borderWidth: 1,
-              paddingLeft: 16,
+        <View style={{
+          height: 60,
+          flexDirection: 'row',
+          justifyContent:'space-evenly',
+        }}>
+          <TextInput
+             style={
+              {
+                height: 60,
+                borderColor: 'gray',
+                borderWidth: 1,
+                flex:8,
+                padding:10,
+                color: '#262626',
+                fontSize: 18,
+                fontWeight: '200',
+              }
             }
-          }
-          placeholder="send a message"
-          onChangeText={(chatTextToSend) => this.setState({ chatTextToSend })}
-          value={this.state.chatTextToSend}
-        />
-        <ActionButton title="Send" onPress={this._addItem.bind(this)} />
+            underlineColorAndroid={'transparent'}
+            placeholder="send a message"
+            onChangeText={(chatTextToSend) => this.setState({ chatTextToSend })}
+            value={this.state.chatTextToSend}
+          />
+          <ActionButton title="Send" onPress={this._addItem.bind(this)} />
+        </View>
       </KeyboardAvoidingView>
-
     );
   }
 }
@@ -300,14 +312,13 @@ class ContactsListScreen extends Component {
     //console.log("testing");
     this.state = {
       dataSource: new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2, }),
-      chatTextToSend: ""
+      chatTextToSend: "",
+      targetChatID: ''
     };
     this.userId = firebase.auth().currentUser.uid;
     //set up a way for us to access the database.
 
     this.contactsRef = firebaseApp.database().ref('users/' + this.userId + '/private/contacts');
-
-    this.targetChatID = "";
 
     console.log('setting contacts ref url to: users/' + this.userId + '/private/contacts');
 
@@ -341,12 +352,19 @@ class ContactsListScreen extends Component {
     return (
       <ListItem item={item} onPress={
         () => {
-          this.contactsRef.child(item.uid + "/ChatID").once('value').then(function(snapshot) {
-            console.log('Pressed a contacts button for: '+ snapshot.val());
+          this.contactsRef.child(item.uid + "/ChatID").once('value', (snapshot) => {
+            console.log('Pressed a contacts button for: ' + snapshot.val());
             //this.props.navigation.navigate('Chat', { chatId: snapshot.val() });
-            this.targetChatID=snapshot.val();
+            this.props.navigation.setParams({ chatId: snapshot.val() });
+            console.log('targetChatID is: ' + snapshot.val());
+            this.props.navigation.navigate('Chat', { chatId: snapshot.val() });
           });
-          this.props.navigation.navigate('Chat', { chatId: this.targetChatID });
+          /*
+          this.props.navigation.setParams({chatId: this.state.targetChatID});
+          console.log('targetChatID is: ' + this.state.targetChatID);
+          this.props.navigation.navigate('Chat', {chatId: this.state.targetChatID});
+          */
+
         }
       } />
     );
@@ -365,7 +383,6 @@ class ContactsListScreen extends Component {
     );*/
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <Text>Does this show up?</Text>
         <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview} />
       </KeyboardAvoidingView>
     );

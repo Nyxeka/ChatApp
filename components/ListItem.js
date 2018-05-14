@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { View, TouchableHighlight, Text } from 'react-native';
-import { styles } from '../styles';
+import { styles} from '../styles';
 
 export default class ListItem extends Component {
 
