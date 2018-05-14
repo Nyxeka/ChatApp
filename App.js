@@ -57,7 +57,7 @@ class LoggedOutScreen extends Component {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({ error: '', loading: false });
-        this.props.navigation.navigate('Contacts');
+        this.props.navigation.navigate('Contacts', { 'email': email });
       })
       .catch(() => {
         this.setState({ error: 'Authentication failed.', loading: false });
@@ -71,7 +71,7 @@ class LoggedOutScreen extends Component {
       .then(() => {
         this.setState({ error: '', loading: false }); // turn off the loading spinner
         x = true;
-        this.props.navigation.navigate('Contacts');
+        this.props.navigation.navigate('Contacts', { 'email': email });
       })
       .catch(() => {
         this.setState({ error: 'Authentication failed.', loading: false });
@@ -92,10 +92,21 @@ class LoggedOutScreen extends Component {
     firebase.auth().signInWithEmailAndPassword('test99@test.com', 'password')
       .then(() => {
         this.setState({ error: '', loading: false });
-        this.props.navigation.navigate('Contacts');
+        this.props.navigation.navigate('Contacts', { 'email': 'test99@test.com' });
       })
       .catch(() => {
-        this.setState({ error: 'Trying to login as tester failed..', loading: false });
+        this.setState({ error: 'Trying to login as tester 1 failed..', loading: false });
+      });
+  }
+
+  LoginAsTester2() {
+    firebase.auth().signInWithEmailAndPassword('njhylands@gmail.com', 'password')
+      .then(() => {
+        this.setState({ error: '', loading: false });
+        this.props.navigation.navigate('Contacts', { 'email': 'njhylands@gmail.com' });
+      })
+      .catch(() => {
+        this.setState({ error: 'Trying to login as tester 2 failed..', loading: false });
       });
   }
 
@@ -128,7 +139,13 @@ class LoggedOutScreen extends Component {
         <View style={styles.buttonResizer}>
           <Button
             onPress={this.LoginAsTester.bind(this)}
-            title="Log in as Tester"
+            title="Log in as Tester 1"
+            style={styles.buttonStyle} />
+        </View>
+        <View style={styles.buttonResizer}>
+          <Button
+            onPress={this.LoginAsTester2.bind(this)}
+            title="Log in as Tester 2"
             style={styles.buttonStyle} />
         </View>
       </View>
@@ -214,7 +231,7 @@ class ChatScreen extends Component {
     };
     this.userId = firebase.auth().currentUser.uid;
 
-    this.chatId = this.props.navigation.getParam('chatId', 'default');
+    this.chatId = this.props.navigation.getParam('chatId', 'default'); // set the chat ChatID so we can get to it.
 
     //set up a way for us to access the database.
     this.chatLogRef = firebaseApp.database().ref('chats/' + this.chatId + "/chatlog");
@@ -260,37 +277,37 @@ class ChatScreen extends Component {
 
   render() {
     return (
-        <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={80}>
-          <ScrollView ref={ref => this.scrollView = ref} style={{flex:1}} onContentSizeChange={(contentWidth, contentHeight) => { this.scrollView.scrollToEnd({ animated: true }); }}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={80}>
+        <ScrollView ref={ref => this.scrollView = ref} style={{ flex: 1 }} onContentSizeChange={(contentWidth, contentHeight) => { this.scrollView.scrollToEnd({ animated: true }); }}>
 
-            <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview} />
-          </ScrollView>
-          <View style={{
-            height: 60,
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-          }}>
-            <TextInput
-              style={
-                {
-                  height: 60,
-                  borderColor: 'gray',
-                  borderWidth: 1,
-                  flex: 8,
-                  padding: 10,
-                  color: '#262626',
-                  fontSize: 18,
-                  fontWeight: '200',
-                }
+          <ListView dataSource={this.state.dataSource} renderRow={this._renderItem.bind(this)} style={styles.listview} />
+        </ScrollView>
+        <View style={{
+          height: 60,
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+        }}>
+          <TextInput
+            style={
+              {
+                height: 60,
+                borderColor: 'gray',
+                borderWidth: 1,
+                flex: 8,
+                padding: 10,
+                color: '#262626',
+                fontSize: 18,
+                fontWeight: '200',
               }
-              underlineColorAndroid={'transparent'}
-              placeholder="send a message"
-              onChangeText={(chatTextToSend) => this.setState({ chatTextToSend })}
-              value={this.state.chatTextToSend}
-            />
-            <ActionButton title="Send" onPress={this._addItem.bind(this)} />
-          </View>
-        </KeyboardAvoidingView>
+            }
+            underlineColorAndroid={'transparent'}
+            placeholder="send a message"
+            onChangeText={(chatTextToSend) => this.setState({ chatTextToSend })}
+            value={this.state.chatTextToSend}
+          />
+          <ActionButton title="Send" onPress={this._addItem.bind(this)} />
+        </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -347,17 +364,79 @@ class ContactsListScreen extends Component {
     });
   }
 
+  openChat(chatInfo) {
+    console.log('attempting to open chat at: ' + chatInfo.chatId);
+
+    var myUID = firebase.auth().currentUser.uid; // local var for our UID.
+
+    if (chatInfo.chatId == 'uninitiated' && chatInfo.chatExists == '') {
+
+      console.log('uninitiated chat, going to attempt to start a new one.');
+      var newChatLayout = { // layout the 'new chat' structure
+        'users': { //navigate to users
+          [myUID]: this.props.navigation.getParam('userEmail', 'userEmail'), // throw in our UID and email
+          [chatInfo.contactUID]: '', // add other uid.
+        }
+      };
+
+      // now add new chat to the database
+      var newChatIdRef = firebaseApp.database().ref('chats').push(newChatLayout, (error) => {
+        if (error) {
+          console.log('ERROR: unable to create chat with user - invalid permissions.')
+        } else {
+          this.addChatId(chatInfo.contactUID,newChatIdRef.key)// add the Chat-id for future reference
+          console.log('created new chat ID at: ' + newChatIdRef.key);
+          this.props.navigation.navigate('Chat', { chatId: newChatIdRef.key });
+        }
+      });
+
+    } else if (chatInfo.chatExists != ''){ // there is a new chat for us to use with this contact already
+
+      console.log('chat already exists at: ' + chatInfo.chatExists);
+      firebaseApp.database().ref('users/' + myUID + '/restricted/newChats/' + chatInfo.chatExists).set({}, 
+      (error) => {
+        if (error) {
+          console.log("new chat reference not removed." + error);
+        } else {
+          console.log("new chat reference removed successfully.");
+        }
+      }); // remove the notification from the "inbox"
+      this.addChatId(chatInfo.contactUID,chatInfo.chatExists); // update our contact with the chat id for future reference.
+      this.props.navigation.navigate('Chat', { 'chatId': chatInfo['chatExists'] });// open a new chat window with the contact
+    }
+     else {
+      this.props.navigation.navigate('Chat', { 'chatId': chatInfo['chatId'] }); // everything's set, open a new chat window with the contact.
+    }
+
+  }
+
+  addChatId(contactUID,newChatID){
+    this.contactsRef.child(contactUID).update({ 'ChatID': newChatID }); // add the Chat-id for future reference
+  }
+
   _renderItem(item) {
 
     return (
       <ListItem item={item} onPress={
         () => {
-          this.contactsRef.child(item.uid + "/ChatID").once('value', (snapshot) => {
-            console.log('Pressed a contacts button for: ' + snapshot.val());
+          this.contactsRef.child(item.uid).once('value', (snapshot) => {
+            console.log('Pressed a contacts button for: ' + snapshot.child('ChatID').val());
             //this.props.navigation.navigate('Chat', { chatId: snapshot.val() });
-            this.props.navigation.setParams({ chatId: snapshot.val() });
-            console.log('targetChatID is: ' + snapshot.val());
-            this.props.navigation.navigate('Chat', { chatId: snapshot.val() });
+            var doesChatExist = ''; 
+            firebaseApp.database().ref('users/' + firebase.auth().currentUser.uid + '/restricted/newChats').on('value', (snap) => {snap.forEach((child) => {
+              if (child.val() == item.uid){
+                doesChatExist = child.key;
+              }
+            })});
+
+            console.log('chatExists: ' + doesChatExist);
+
+            this.openChat({
+              chatId: snapshot.child('ChatID').val(),
+              contactUID: item.uid,
+              contactName: snapshot.child('name').val(),
+              chatExists: doesChatExist
+            });
           });
           /*
           this.props.navigation.setParams({chatId: this.state.targetChatID});
