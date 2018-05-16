@@ -11,6 +11,7 @@ const styles = {
   container: {
     backgroundColor: '#fff',
     flex: 1,
+    padding:5
   },
   listview: {
     flex: 1,
@@ -18,14 +19,25 @@ const styles = {
     //borderColor: '#FF0000', // debug colour for border
 
   },
+  contactsListView:{
+    flex: 4,
+    backgroundColor:'#FAFAFA',
+    padding:5
+  },
+  contactsRequestView: {
+    flex:1,
+    backgroundColor:'#F1F1F1',
+    padding:5
+  },
   li: {
-    backgroundColor: '#fff',
-    borderBottomColor: '#eee',
+    backgroundColor: '#DFDFDFDF',
+    //borderBottomColor: '#eee',
     //borderColor: '#00FF00', // debug colour for border
-    borderWidth: 1,
+    //borderWidth: 1,
     paddingLeft: 16,
     paddingTop: 14,
     paddingBottom: 16,
+    margin:3,
   },
   liContainer: {
     flex: 2,
@@ -108,6 +120,15 @@ const styles = {
     width: '100%',
     flex: 1,
   },
+  contactButtonsContainer: {
+    //borderColor: '#00FF00', // green border for debug
+    //borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    justifyContent: "space-evenly",
+    width: '100%',
+    flex:1
+  },
   // individual button style stuff
   buttonStyle: {
     width: '100%',
@@ -139,7 +160,7 @@ const styles = {
   },
   // holds the text boxes and buttons. has grey bg
   inputFieldsContainer: {
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     flex: 4,
     flexDirection: 'column',
     width: '95%',
